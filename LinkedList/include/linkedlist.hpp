@@ -21,16 +21,91 @@ private:
     size_t size;
 
 public:
+    /**
+     * @brief Construct a new Linked List object
+     *
+     */
     LinkedList();
+    /**
+     * @brief Destroy the Linked List object
+     * 
+     */
+    ~LinkedList();
+    /**
+     * @brief Display All the data
+     *
+     */
     void display(void) const;
     void append(const T &data);
+    /**
+     * @brief Need operator Overloading if you want use with data instead of key
+     * for custom data type or even with string
+     *
+     */
+
+    /**
+     * @brief Remove Partcular data
+     *
+     */
     void remove(const T &);
+    /**
+     * @brief append data to front of the linkedlist
+     *
+     */
     void prepend(const T &);
+    /**
+     * @brief Remove Node From the front side
+     *
+     */
     void removeFirstNode();
+    /**
+     * @brief Remove Node From last
+     *
+     */
     void removeLastNode();
+    /**
+     * @brief Remove Node with particular position
+     *
+     * @param pos
+     */
     void removeAt(const size_t &pos);
+    /**
+     * @brief Get the Size LinkedList
+     *
+     * @return size_t
+     */
     size_t getSize() const { return this->size; };
+    void insert(const size_t &, const T &);
 };
+template<typename T>
+LinkedList<T>::~LinkedList()
+{
+    Node* next=nullptr;
+    while(head!=nullptr)
+    {
+      next=head->next;
+      delete head;
+      head=next;
+    }
+}
+template <typename T>
+void LinkedList<T>::insert(const size_t &pos, const T &data)
+{
+    if (pos > 1 && pos < getSize())
+    {
+        Node *new_node = new Node(data);
+        Node *prev = nullptr;
+        Node *cur = this->head;
+        for (size_t i = 1; i < pos; ++i)
+        {
+            prev = cur;
+            cur = cur->next;
+        };
+        prev->next = new_node;
+        new_node->next = cur;
+        ++this->size;
+    }
+}
 template <typename T>
 void LinkedList<T>::removeAt(const size_t &pos)
 {
@@ -114,22 +189,20 @@ void LinkedList<T>::prepend(const T &data)
 template <typename T>
 void LinkedList<T>::remove(const T &key)
 {
-    Node *temp_head = head;
-    Node *temp_node = this->head;
-    Node *step_back = nullptr;
-    while (temp_node)
+    Node *prev{head}, *cur{head};
+    if (head != nullptr)
     {
-        if (temp_node->data == key)
+        while (cur->next != nullptr)
         {
-            step_back = temp_node->next;
-            free(temp_node);
-            --this->size;
-            return;
-        }
-        else
-        {
-            step_back = temp_node;
-            temp_node = temp_node->next;
+            if (cur->data == key)
+            {
+                prev->next = cur->next;
+                free(cur);
+                --this->size;
+                return;
+            };
+            prev = cur;
+            cur = cur->next;
         };
     }
 }
@@ -163,7 +236,7 @@ LinkedList<T>::LinkedList()
 template <typename T>
 void LinkedList<T>::display(void) const
 {
-    printf("sizeof obj type : %lu byte\n", sizeof(T));
+    printf("[object type : %s, Size of Linkedlist : %lu]\n",typeid(T).name(),this->getSize());
     const Node *temp_node = this->head;
     while (temp_node)
     {
